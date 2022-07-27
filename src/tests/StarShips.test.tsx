@@ -2,26 +2,17 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import { faker } from '@faker-js/faker';
 import '@testing-library/jest-dom';
 
 import { StarShips } from '../components/StarShips';
+import { getMockedStarShips } from './mocks/variables';
 
-const mockedData = {
-  results: [
-    {
-      name: faker.name.findName(),
-      length: faker.datatype.number(),
-      passengers: faker.datatype.number(),
-      starship_class: faker.word.adjective(),
-    },
-  ],
-};
+const mockedData = getMockedStarShips();
 
 const server = setupServer(
-  rest.get('https://swapi.dev/api/starships', (req, res, ctx) => {
-    return res(ctx.json(mockedData));
-  })
+  rest.get('https://swapi.dev/api/starships', (req, res, ctx) =>
+    res(ctx.json(mockedData))
+  )
 );
 
 beforeAll(() => server.listen());
@@ -33,7 +24,7 @@ describe('StarShips component', () => {
     render(<StarShips />);
 
     const result = await screen.findByText(
-      'Length: ' + mockedData.results[0].length
+      `Length: ${mockedData.results[0].length}`
     );
 
     expect(result).toBeInTheDocument();

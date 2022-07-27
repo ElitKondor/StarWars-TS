@@ -2,26 +2,17 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import { faker } from '@faker-js/faker';
 import '@testing-library/jest-dom';
 
 import { Planets } from '../components/Planets';
+import { getMockedPlanets } from './mocks/variables';
 
-const mockedData = {
-  results: [
-    {
-      name: faker.name.findName(),
-      climate: faker.word.adjective(),
-      terrain: faker.word.adjective(),
-      population: faker.datatype.number(),
-    },
-  ],
-};
+const mockedData = getMockedPlanets();
 
 const server = setupServer(
-  rest.get('https://swapi.dev/api/planets', (req, res, ctx) => {
-    return res(ctx.json(mockedData));
-  })
+  rest.get('https://swapi.dev/api/planets', (req, res, ctx) =>
+    res(ctx.json(mockedData))
+  )
 );
 
 beforeAll(() => server.listen());
@@ -33,7 +24,7 @@ describe('Planets component', () => {
     render(<Planets />);
 
     const result = await screen.findByText(
-      'Climate: ' + mockedData.results[0].climate
+      `Climate: ${mockedData.results[0].climate}`
     );
 
     expect(result).toBeInTheDocument();
@@ -41,9 +32,9 @@ describe('Planets component', () => {
 
   test('should fail fetching', async () => {
     server.use(
-      rest.get('https://swapi.dev/api/planets', (req, res, ctx) => {
-        return res(ctx.status(404), ctx.json({}));
-      })
+      rest.get('https://swapi.dev/api/planets', (req, res, ctx) =>
+        res(ctx.status(404), ctx.json({}))
+      )
     );
     Object.defineProperty(window, 'localStorage', {
       value: {

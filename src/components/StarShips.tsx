@@ -10,7 +10,8 @@ import {
 import { v4 as uuid } from 'uuid';
 import { gsap } from 'gsap';
 
-import { getContent, getImageLink } from '../utils/api';
+import { getContent } from '../utils/api';
+import data from '../utils/paths.json';
 
 export const StarShips = () => {
   const [starShips, setStarShips] = useState<object[]>([]);
@@ -19,7 +20,7 @@ export const StarShips = () => {
     const fetchedShips = localStorage.getItem('starships');
 
     if (!fetchedShips) {
-      (async function () {
+      (async () => {
         const data = await getContent('starships');
         setStarShips(data);
       })();
@@ -40,8 +41,7 @@ export const StarShips = () => {
       document.querySelectorAll('.MuiCardMedia-root');
     images.forEach((img) => {
       img.addEventListener('error', () => {
-        const defaultImage =
-          'https://starwars-visualguide.com/assets/img/big-placeholder.jpg';
+        const { defaultImage } = data;
 
         img.src = defaultImage;
         img.alt = 'Default Template';
@@ -52,42 +52,40 @@ export const StarShips = () => {
   return (
     <Container maxWidth='lg'>
       <h1>Starships:</h1>
-      <Grid container spacing={2}>
-        {starShips.map((starShip: any, i: number) => {
-          return (
-            <Grid className='grid-item' key={uuid()} item xs={6} md={4} lg={3}>
-              <Card>
-                <CardMedia
-                  component='img'
-                  height='250'
-                  src={getImageLink('starships', i + 6)}
-                  alt='StarShip image'
-                  sx={{
-                    objectFit: 'contain',
-                  }}
-                />
-                <CardContent>
-                  <Typography
-                    variant='h5'
-                    component='div'
-                    color='text.secondary'
-                  >
-                    {starShip.name}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    Length: {starShip.length}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    Passengers: {starShip.passengers}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    Class: {starShip.starship_class}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+      <Grid container spacing={2} sx={{ marginBottom: '30px' }}>
+        {starShips.map((starShip: any, i: number) => (
+          <Grid className='grid-item' key={uuid()} item xs={6} md={4} lg={3}>
+            <Card
+              sx={{
+                height: '400px',
+              }}
+            >
+              <CardMedia
+                component='img'
+                height='250'
+                src={`${data.baseImageUrl}starships/${i + 6}.jpg`}
+                alt='StarShip image'
+                sx={{
+                  objectFit: 'contain',
+                }}
+              />
+              <CardContent>
+                <Typography variant='h5' component='div' color='text.secondary'>
+                  {starShip.name}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Length: ${starShip.length}`}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Passengers: ${starShip.passengers}`}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Class: ${starShip.starship_class}`}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );

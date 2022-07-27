@@ -1,27 +1,18 @@
 import React from 'react';
-import { render, screen, fireEvent, createEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
-import { faker } from '@faker-js/faker';
 
 import { People } from '../components/People';
+import { getMockedPeople } from './mocks/variables';
 
-const mockedData = {
-  results: [
-    {
-      name: faker.name.findName(),
-      gender: faker.name.gender(),
-      eye_color: faker.color.human(),
-      birth_year: faker.date.birthdate(),
-    },
-  ],
-};
+const mockedData = getMockedPeople();
 
 const server = setupServer(
-  rest.get('https://swapi.dev/api/people', (req, res, ctx) => {
-    return res(ctx.json(mockedData));
-  })
+  rest.get('https://swapi.dev/api/people', (req, res, ctx) =>
+    res(ctx.json(mockedData))
+  )
 );
 
 beforeAll(() => server.listen());
@@ -33,7 +24,7 @@ describe('People component', () => {
     render(<People />);
 
     const result = await screen.findByText(
-      'Eye color: ' + mockedData.results[0].eye_color
+      `Eye color: ${mockedData.results[0].eye_color}`
     );
 
     expect(result).toBeInTheDocument();

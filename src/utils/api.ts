@@ -9,7 +9,3 @@ export const getContent = async (type: string) => {
     throw new Error('Error happen');
   }
 };
-
-export const getImageLink = (type: string, index: number) => {
-  return `https://starwars-visualguide.com/assets/img/${type}/${index}.jpg`;
-};

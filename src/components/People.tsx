@@ -10,7 +10,8 @@ import {
 import { v4 as uuid } from 'uuid';
 import { gsap } from 'gsap';
 
-import { getContent, getImageLink } from '../utils/api';
+import { getContent } from '../utils/api';
+import data from '../utils/paths.json';
 
 export const People = () => {
   const [people, setPeople] = useState<object[]>([]);
@@ -19,7 +20,7 @@ export const People = () => {
     const fetchedPeople = localStorage.getItem('people');
 
     if (!fetchedPeople) {
-      (async function () {
+      (async () => {
         const data = await getContent('people');
         setPeople(data);
       })();
@@ -34,8 +35,7 @@ export const People = () => {
 
     images.forEach((img) => {
       img.addEventListener('error', () => {
-        const defaultImage =
-          'https://starwars-visualguide.com/assets/img/big-placeholder.jpg';
+        const { defaultImage } = data;
 
         img.src = defaultImage;
         img.alt = 'Default Template';
@@ -53,42 +53,36 @@ export const People = () => {
   return (
     <Container maxWidth='lg'>
       <h1>People:</h1>
-      <Grid container spacing={2}>
-        {people.map((person: any, i: number) => {
-          return (
-            <Grid className='grid-item' item key={uuid()} xs={6} md={4} lg={3}>
-              <Card>
-                <CardMedia
-                  component='img'
-                  height='300'
-                  src={getImageLink('characters', i + 1)}
-                  alt='Character image'
-                  sx={{
-                    objectFit: 'contain',
-                  }}
-                />
-                <CardContent>
-                  <Typography
-                    variant='h5'
-                    component='div'
-                    color='text.secondary'
-                  >
-                    {person.name}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    {'Eye color: ' + person.eye_color}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    {'Birth year: ' + person.birth_year}
-                  </Typography>
-                  <Typography sx={{ fontSize: 14 }} color='text.secondary'>
-                    {'Gender: ' + person.gender}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+      <Grid container spacing={2} sx={{ marginBottom: '30px' }}>
+        {people.map((person: any, i: number) => (
+          <Grid className='grid-item' item key={uuid()} xs={6} md={4} lg={3}>
+            <Card>
+              <CardMedia
+                component='img'
+                height='300'
+                src={`${data.baseImageUrl}characters/${i + 1}.jpg`}
+                alt='Character image'
+                sx={{
+                  objectFit: 'contain',
+                }}
+              />
+              <CardContent>
+                <Typography variant='h5' component='div' color='text.secondary'>
+                  {person.name}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Eye color: ${person.eye_color}`}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Birth year: ${person.birth_year}`}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }} color='text.secondary'>
+                  {`Gender: ${person.gender}`}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );

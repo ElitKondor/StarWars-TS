@@ -31,25 +31,21 @@ const App: Function = () => {
   ];
 
   return (
-    <>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path='/' element={<Home />} />
-          {pages.map((elem: [JSX.Element, string]) => {
-            return (
-              <Route
-                path={elem[1]}
-                key={uuid()}
-                element={
-                  <Suspense fallback={<CircularProgress />}>{elem[0]}</Suspense>
-                }
-              />
-            );
-          })}
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        {pages.map((page: [JSX.Element, string]) => (
+          <Route
+            path={page[1]}
+            key={uuid()}
+            element={
+              <Suspense fallback={<CircularProgress />}>{page[0]}</Suspense>
+            }
+          />
+        ))}
+      </Routes>
+    </Router>
   );
 };
 
